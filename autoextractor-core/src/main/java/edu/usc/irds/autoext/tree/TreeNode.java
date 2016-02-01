@@ -7,6 +7,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,7 +16,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * TreeNode is a wrapper for {@link Node} which includes additional functions for
  * efficiently computing the edit distance
  */
-public class TreeNode {
+public class TreeNode implements Serializable {
+
+    private static final long serialVersionUID = 3679413437699206690L;
 
     protected String externalId;
     protected String nodeName;
