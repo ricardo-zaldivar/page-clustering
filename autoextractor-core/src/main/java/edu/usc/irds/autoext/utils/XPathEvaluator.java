@@ -9,6 +9,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,10 +19,11 @@ import java.util.Set;
  * @author Thamme Gowda
  * @since Jan 16, 2016
  */
-public class XPathEvaluator {
+public class XPathEvaluator implements Serializable {
 
     public static final Logger LOG = LoggerFactory.getLogger(XPathEvaluator.class.getName());
     private static final String CLASS_VAL_XPATH = "//*[@class]/@class";
+    private static final long serialVersionUID = -4886553689128529323L;
 
     private XPathFactory xPathFactory;
     private XPathExpression cssClassValExprsn;

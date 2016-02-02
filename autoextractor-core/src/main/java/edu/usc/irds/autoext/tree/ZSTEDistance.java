@@ -2,6 +2,7 @@ package edu.usc.irds.autoext.tree;
 
 import edu.usc.irds.autoext.base.EditCost;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,8 +12,9 @@ import static java.lang.Math.min;
  * Zhang - Shasha's Tree edit distance matrix
  * @see ZSTEDComputer
  */
-public class ZSTEDistance {
+public class ZSTEDistance implements Serializable {
 
+    private static final long serialVersionUID = -3804460419024208744L;
     private final List<TreeNode> iNodes;
     private final List<TreeNode> jNodes;
     private final List<Integer> iKeyRoots;

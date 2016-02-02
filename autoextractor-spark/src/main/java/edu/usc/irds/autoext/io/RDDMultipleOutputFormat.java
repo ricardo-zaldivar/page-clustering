@@ -1,4 +1,4 @@
-package edu.usc.irds.autoext.spark;
+package edu.usc.irds.autoext.io;
 
 import org.apache.hadoop.mapred.lib.MultipleSequenceFileOutputFormat;
 

@@ -4,13 +4,15 @@ import edu.usc.irds.autoext.base.SimilarityComputer;
 import edu.usc.irds.autoext.utils.XPathEvaluator;
 import org.w3c.dom.Element;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * Computes CSS style Similarity between two DOM trees
  */
-public class StyleSimComputer implements SimilarityComputer<TreeNode> {
+public class StyleSimComputer implements SimilarityComputer<TreeNode>, Serializable {
 
+    private static final long serialVersionUID = 6680072428272456472L;
     private static XPathEvaluator xPathUtil = new XPathEvaluator();
 
     /**
@@ -31,7 +33,7 @@ public class StyleSimComputer implements SimilarityComputer<TreeNode> {
         }
         int intersectSize = countIntersection(setA, setB);
         // the jaccards similarity
-        return intersectSize / (modA + modB - intersectSize);
+        return (double) intersectSize / (modA + modB - intersectSize);
     }
 
     /**

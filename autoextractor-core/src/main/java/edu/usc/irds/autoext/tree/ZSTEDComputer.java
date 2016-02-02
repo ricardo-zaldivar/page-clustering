@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +30,9 @@ import java.util.List;
  *     K. Zhang and D. Shasha. 1989. Simple fast algorithms for the editing distance between trees and related problems. SIAM J. Comput. 18, 6 (December 1989), 1245-1262.
  * </pre>
  */
-public class ZSTEDComputer implements EditDistanceComputer<TreeNode> {
+public class ZSTEDComputer implements EditDistanceComputer<TreeNode>, Serializable {
 
+    private static final long serialVersionUID = 2054631459801383484L;
     private EditCost<TreeNode> costMetric = new DefaultEditCost();
 
     /**
