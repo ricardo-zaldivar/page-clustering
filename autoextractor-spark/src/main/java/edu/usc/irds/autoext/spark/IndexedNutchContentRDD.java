@@ -1,5 +1,9 @@
-package edu.usc.irds.autoext.nutch;
+package edu.usc.irds.autoext.spark;
 
+import edu.usc.irds.autoext.nutch.ContentIterator;
+import edu.usc.irds.autoext.nutch.ContentPartition;
+import edu.usc.irds.autoext.nutch.IndexedContent;
+import edu.usc.irds.autoext.nutch.IndexedContentIterator;
 import edu.usc.irds.autoext.spark.utils.LangUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.nutch.protocol.Content;
