@@ -6,7 +6,7 @@ import java.net.URL
 import java.util.function.Function
 
 import edu.usc.irds.autoext.base.SimilarityComputer
-import edu.usc.irds.autoext.nutch.{IndexedNutchContentRDD, NutchContentRDD}
+import edu.usc.irds.autoext.io.RDDMultipleOutputFormat
 import edu.usc.irds.autoext.spark.ContentCluster._
 import edu.usc.irds.autoext.tree._
 import org.apache.commons.io.IOUtils
@@ -26,7 +26,6 @@ import org.xml.sax.InputSource
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
-
 
 
 
@@ -73,6 +72,10 @@ class ContentCluster {
     this.domainsDir = new Path(workDir, DOMAINS_DIR)
     this.simDir = new Path(workDir, SIMILARITY_DIR)
     this.hConf = new Configuration
+    val fs = FileSystem.get(hConf)
+    fs.mkdirs(workDir)
+    fs.mkdirs(new Path(simDir, ENTRIES_DIR))
+    fs.mkdirs(new Path(simDir, MATRIX_DIR))
 
 
     // validate
@@ -221,10 +224,7 @@ class ContentCluster {
       }
     }
   }
-
 }
-
-
 
 /**
   * Created by tg on 1/31/16.
@@ -239,7 +239,7 @@ object ContentCluster {
 
   def main(args: Array[String]) {
 
-    var args = "-list list.txt -workdir out-2".split(" ")
+    //var args = "-list list.txt -workdir out-2".split(" ")
     val instance = new ContentCluster
     val parser = new CmdLineParser(instance)
     try {
@@ -255,17 +255,15 @@ object ContentCluster {
     instance.init()
     LOG.info("Initialization complete")
     LOG.info("Separating domains...")
-    //instance.separateDomains()
+    instance.separateDomains()
     LOG.info("Domains separation complete")
     LOG.info("Computing similarity...")
-    //instance.computeSimilarity()
+    instance.computeSimilarity()
     LOG.info("Similarity Computation done...")
 
     LOG.info("Clustering...")
     instance.cluster()
     LOG.info("Computing complete!")
-
-    //i.test()
   }
 }
 
