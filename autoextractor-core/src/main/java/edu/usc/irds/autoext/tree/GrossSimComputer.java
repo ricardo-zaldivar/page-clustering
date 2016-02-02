@@ -3,6 +3,7 @@ package edu.usc.irds.autoext.tree;
 import edu.usc.irds.autoext.base.SimilarityComputer;
 import edu.usc.irds.autoext.utils.Checks;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,8 +12,9 @@ import java.util.List;
  * @author Thamme Gowda N
  * @since Jan 16, 2016
  */
-public class GrossSimComputer<T> implements SimilarityComputer<T> {
+public class GrossSimComputer<T> implements SimilarityComputer<T>, Serializable {
 
+    private static final long serialVersionUID = -6461871245307945046L;
     private final List<SimilarityComputer<T>> computers;
     private final List<Double> weights;
     private int n;

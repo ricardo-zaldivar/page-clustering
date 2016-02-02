@@ -5,14 +5,16 @@ import edu.usc.irds.autoext.base.EditDistanceComputer;
 import edu.usc.irds.autoext.base.SimilarityComputer;
 import edu.usc.irds.autoext.utils.Checks;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *Computes the structural similarity between two DOM Trees
  *
  */
-public class StructureSimComputer implements SimilarityComputer<TreeNode> {
+public class StructureSimComputer implements SimilarityComputer<TreeNode>, Serializable{
 
+    private static final long serialVersionUID = 5434501333215722663L;
     private final EditCost<TreeNode> costMetric;
     private EditDistanceComputer<TreeNode> distanceComputer;
 
