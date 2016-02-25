@@ -3,10 +3,13 @@ package edu.usc.irds.autoext.tree;
 import edu.usc.irds.autoext.base.EditCost;
 import edu.usc.irds.autoext.base.EditDistanceComputer;
 import edu.usc.irds.autoext.utils.MatrixUtils;
+import edu.usc.irds.autoext.utils.Timer;
 import org.cyberneko.html.parsers.DOMParser;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -32,6 +35,7 @@ import java.util.List;
  */
 public class ZSTEDComputer implements EditDistanceComputer<TreeNode>, Serializable {
 
+    public static final Logger LOG = LoggerFactory.getLogger(ZSTEDComputer.class);
     private static final long serialVersionUID = 2054631459801383484L;
     private EditCost<TreeNode> costMetric = new DefaultEditCost();
 
@@ -91,6 +95,7 @@ public class ZSTEDComputer implements EditDistanceComputer<TreeNode>, Serializab
         double distanceMatrix[][] = new double[n][n];
         boolean symmetricMeasure = getCostMetric().isSymmetric();
 
+        Timer timer = new Timer();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i == j){
@@ -101,7 +106,13 @@ public class ZSTEDComputer implements EditDistanceComputer<TreeNode>, Serializab
                     distanceMatrix[i][j] = distanceMatrix[j][i];
                 } else {
                     // upper diagonal or unsymmetrical, compute it
-                    distanceMatrix[i][j] = computeDistance(trees.get(i), trees.get(j));
+                    TreeNode tree1 = trees.get(i);
+                    TreeNode tree2 = trees.get(j);
+                    timer.reset();
+                    distanceMatrix[i][j] = computeDistance(tree1, tree2);
+                    long time = timer.read();
+                    LOG.debug("({}ms) {} = {} {}", time, distanceMatrix[i][j],
+                            tree1.getExternalId(), tree2.getExternalId());
                 }
             }
         }
