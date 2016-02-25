@@ -236,6 +236,31 @@ public class TreeNode implements Serializable {
         this.externalId = externalId;
     }
 
+    /**
+     * Copies the tree labels into bracket notation tree
+     * @param builder the string builder to copy the labels
+     */
+    protected void toBracketNotation(StringBuilder builder){
+        builder.append("{").append(getNodeName());
+        if (hasChildNodes()) {
+            for (TreeNode child : getChildren()) {
+                child.toBracketNotation(builder);
+            }
+        }
+        builder.append("}");
+    }
+
+    /**
+     * Converts the tree rooted at this node to bracket notation
+     * @return String containing bracket notation of string labels
+     */
+    public String toBracketNotation(){
+        StringBuilder builder = new StringBuilder();
+        toBracketNotation(builder);
+        return builder.toString();
+    }
+
+
     public static void main(String[] args) throws Exception {
         DOMParser parser = new DOMParser();
 
