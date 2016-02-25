@@ -55,7 +55,14 @@ public class ZSTEDComputer implements EditDistanceComputer<TreeNode>, Serializab
 
     @Override
     public double computeDistance(TreeNode tree1, TreeNode tree2) {
-        return new ZSTEDistance(tree1, tree2, costMetric).compute();
+        long st = System.currentTimeMillis();
+        double distance = new ZSTEDistance(tree1, tree2, costMetric).compute();
+        if (LOG.isDebugEnabled()) {
+            long time = System.currentTimeMillis() - st;
+            LOG.debug("Time={}, dist={}, obj1={}, obj2={}", time, distance,
+                    tree1.getExternalId(), tree2.getExternalId());
+        }
+        return distance;
     }
 
     @Override
@@ -95,7 +102,6 @@ public class ZSTEDComputer implements EditDistanceComputer<TreeNode>, Serializab
         double distanceMatrix[][] = new double[n][n];
         boolean symmetricMeasure = getCostMetric().isSymmetric();
 
-        Timer timer = new Timer();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i == j){
@@ -106,13 +112,7 @@ public class ZSTEDComputer implements EditDistanceComputer<TreeNode>, Serializab
                     distanceMatrix[i][j] = distanceMatrix[j][i];
                 } else {
                     // upper diagonal or unsymmetrical, compute it
-                    TreeNode tree1 = trees.get(i);
-                    TreeNode tree2 = trees.get(j);
-                    timer.reset();
-                    distanceMatrix[i][j] = computeDistance(tree1, tree2);
-                    long time = timer.read();
-                    LOG.debug("({}ms) {} = {} {}", time, distanceMatrix[i][j],
-                            tree1.getExternalId(), tree2.getExternalId());
+                    distanceMatrix[i][j] = computeDistance(trees.get(i), trees.get(j));
                 }
             }
         }
