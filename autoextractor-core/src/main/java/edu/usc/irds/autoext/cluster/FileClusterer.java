@@ -25,8 +25,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This class offers commandline interface to make use of similarity and clustering
@@ -80,7 +78,7 @@ public class FileClusterer {
 
             //Step1: write ids/paths to separate file
             File idsFile = new File(workDir, IDS_FILE);
-            Files.write(idsFile.toPath(), ids);
+            Files.write(idsFile.toPath(), ids, Charset.forName("UTF-8"));
             LOG.info("Wrote paths to {} ", idsFile.toPath());
             report.printf("Wrote %d ids to %s file in %dms\n", ids.size(), idsFile, timer.reset());
 
@@ -152,7 +150,7 @@ public class FileClusterer {
 
             //Step1: write ids/paths to separate file
             File idsFile = new File(workDir, IDS_FILE);
-            Files.write(idsFile.toPath(), labels);
+            Files.write(idsFile.toPath(), labels, Charset.forName("UTF-8"));
             LOG.info("Wrote paths to {} ", idsFile.toPath());
             report.printf("Wrote %d ids to %s file in %dms\n", labels.size(), idsFile, timer.reset());
 

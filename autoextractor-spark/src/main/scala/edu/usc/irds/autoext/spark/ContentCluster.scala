@@ -3,12 +3,12 @@ package edu.usc.irds.autoext.spark
 import java.io.{ByteArrayInputStream, IOException}
 import java.lang
 import java.net.URL
-import java.util.function.Function
 
 import edu.usc.irds.autoext.base.SimilarityComputer
 import edu.usc.irds.autoext.io.RDDMultipleOutputFormat
 import edu.usc.irds.autoext.spark.ContentCluster._
 import edu.usc.irds.autoext.tree._
+import edu.usc.irds.lang.Function
 import org.apache.commons.io.IOUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileStatus, FileSystem, Path, PathFilter}

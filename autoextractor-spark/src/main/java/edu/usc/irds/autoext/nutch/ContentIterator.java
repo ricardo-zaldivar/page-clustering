@@ -1,5 +1,6 @@
 package edu.usc.irds.autoext.nutch;
 
+import edu.usc.irds.lang.Function;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
@@ -14,7 +15,6 @@ import scala.collection.AbstractIterator;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.function.Function;
 
 /**
  * Reads Nutch Content from Sequence files
@@ -87,5 +87,10 @@ public class ContentIterator extends AbstractIterator<Content> implements Iterat
         Content tmp = next;
         next = makeNext();
         return tmp;
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Remove not supported");
     }
 }

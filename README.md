@@ -6,6 +6,13 @@ NOTE : The project is under active development, as a result the README is out of
 
 TODO: update this file with the description of all new features.
 
+
+## Requirements
++ JDK 7 or newer
++ Maven
++ Working internet
+
+
 # Example Usage:
 ## 1. Structural Similarity Between HTML/XML documents
 <pre>

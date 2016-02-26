@@ -1,7 +1,8 @@
 package edu.usc.irds.autoext.utils;
 
+import edu.usc.irds.lang.BiFunction;
+
 import java.util.List;
-import java.util.function.BiFunction;
 
 /**
  * Utilities related to matrix operations

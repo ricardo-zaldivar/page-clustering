@@ -1,7 +1,8 @@
 package edu.usc.irds.autoext.spark
 
 import java.lang.Boolean
-import java.util.function.Function
+
+import edu.usc.irds.lang.Function
 
 /**
   * Creates a filter based substring presence

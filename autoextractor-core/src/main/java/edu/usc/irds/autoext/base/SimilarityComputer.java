@@ -2,8 +2,8 @@ package edu.usc.irds.autoext.base;
 
 import edu.usc.irds.autoext.tree.StructureSimComputer;
 import edu.usc.irds.autoext.tree.StyleSimComputer;
+import edu.usc.irds.lang.BiFunction;
 
-import java.util.function.BiFunction;
 
 /**
  * Generic Similarity computer contract. Look into the implementations for specific details

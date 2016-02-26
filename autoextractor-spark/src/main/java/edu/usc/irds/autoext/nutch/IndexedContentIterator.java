@@ -34,7 +34,6 @@ public class IndexedContentIterator extends AbstractIterator<IndexedContent>
         this.iterator = iterator;
     }
 
-
     @Override
     public boolean hasNext() {
         return iterator.hasNext();
@@ -43,5 +42,10 @@ public class IndexedContentIterator extends AbstractIterator<IndexedContent>
     @Override
     public IndexedContent next() {
         return new IndexedContent(index++, iterator.next());
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Remove not supported");
     }
 }

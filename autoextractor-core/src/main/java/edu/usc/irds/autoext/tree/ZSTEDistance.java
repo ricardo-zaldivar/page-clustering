@@ -5,7 +5,6 @@ import edu.usc.irds.autoext.base.EditCost;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
 

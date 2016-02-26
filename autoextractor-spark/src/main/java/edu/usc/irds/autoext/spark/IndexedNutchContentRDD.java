@@ -5,6 +5,7 @@ import edu.usc.irds.autoext.nutch.ContentPartition;
 import edu.usc.irds.autoext.nutch.IndexedContent;
 import edu.usc.irds.autoext.nutch.IndexedContentIterator;
 import edu.usc.irds.autoext.spark.utils.LangUtils;
+import edu.usc.irds.lang.Function;
 import org.apache.hadoop.fs.Path;
 import org.apache.nutch.protocol.Content;
 import org.apache.nutch.util.NutchConfiguration;
@@ -20,7 +21,6 @@ import scala.collection.Iterator;
 import scala.collection.mutable.ArrayBuffer;
 import scala.reflect.ClassTag;
 
-import java.util.function.Function;
 
 /**
  * Creates Nutch Content RDD from a list of Sequence file paths
