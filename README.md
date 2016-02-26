@@ -12,6 +12,21 @@ TODO: update this file with the description of all new features.
 + Maven
 + Working internet
 
+### Build for Spark submission
+ `mvn clean compile package -Pspark-submit`
+
+### Spark Submisson
+```
+ spark-submit --driver-memory 2G --driver-cores 2 \
+    --driver-library-path /usr/lib/hadoop/lib/native/ \
+    --class edu.usc.irds.autoext.spark.ContentCluster \
+    --master yarn-client \
+    autoextractor-spark/target/autoext-spark-0.1-SNAPSHOT-submit-1.5.0_2.10.jar \
+    -list list.txt -workdir weapons/sample2
+```
+
+
+
 
 # Example Usage:
 ## 1. Structural Similarity Between HTML/XML documents
