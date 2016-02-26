@@ -4,6 +4,7 @@ import edu.usc.irds.autoext.base.SimilarityComputer;
 import edu.usc.irds.autoext.utils.Checks;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Thamme Gowda N
  * @since Jan 16, 2016
  */
-public class GrossSimComputer<T> implements SimilarityComputer<T>, Serializable {
+public class GrossSimComputer<T> extends SimilarityComputer<T> implements Serializable {
 
     private static final long serialVersionUID = -6461871245307945046L;
     private final List<SimilarityComputer<T>> computers;
@@ -61,7 +62,10 @@ public class GrossSimComputer<T> implements SimilarityComputer<T>, Serializable 
         ZSTEDComputer edComputer = new ZSTEDComputer();
         StructureSimComputer structSimComputer = new StructureSimComputer(edComputer);
         StyleSimComputer styleSimComputer = new StyleSimComputer();
-        List<SimilarityComputer<TreeNode>> similarityComputers = Arrays.asList(structSimComputer, styleSimComputer);
+
+        List<SimilarityComputer<TreeNode>> similarityComputers = new ArrayList<>();
+        similarityComputers.add(structSimComputer);
+        similarityComputers.add(styleSimComputer);
         List<Double> weights = Arrays.asList(structureSimWeight, 1.0 - structureSimWeight);
         return new GrossSimComputer<>(similarityComputers, weights);
     }

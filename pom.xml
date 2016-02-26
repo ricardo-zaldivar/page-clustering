@@ -12,12 +12,12 @@
     <packaging>pom</packaging>
 
     <name>auto-extractor</name>
-    <url>http://cs.usc.edu</url>
+    <url>http://irds.usc.edu</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <source.version>1.8</source.version>
-        <target.version>1.8</target.version>
+        <source.version>1.7</source.version>
+        <target.version>1.7</target.version>
         <slf4j.version>1.7.12</slf4j.version>
         <junit.version>4.12</junit.version>
     </properties>
@@ -27,6 +27,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
+
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -46,6 +47,7 @@
                     <target>${target.version}</target>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>

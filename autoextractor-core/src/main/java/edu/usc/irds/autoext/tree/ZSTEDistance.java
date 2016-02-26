@@ -3,6 +3,7 @@ package edu.usc.irds.autoext.tree;
 import edu.usc.irds.autoext.base.EditCost;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +40,16 @@ public class ZSTEDistance implements Serializable {
         this.iNodes = iTree.postOrderTraverse();
         this.jNodes = jTree.postOrderTraverse();
         this.treeDist = new double[iNodes.size()][jNodes.size()];
-        this.iKeyRoots = iTree.getKeyRoots().stream().map(TreeNode::getIndex).collect(Collectors.toList());
-        this.jKeyRoots = jTree.getKeyRoots().stream().map(TreeNode::getIndex).collect(Collectors.toList());
+        this.iKeyRoots = new ArrayList<>();
+        this.jKeyRoots = new ArrayList<>();
+        for (TreeNode node : iTree.getKeyRoots()) {
+            iKeyRoots.add(node.getIndex());
+        }
+        for (TreeNode node : jTree.getKeyRoots()) {
+            jKeyRoots.add(node.getIndex());
+        }
     }
+
 
     /**
      * Computes and returns edit distance

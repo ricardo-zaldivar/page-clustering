@@ -12,7 +12,7 @@ import java.util.List;
  *Computes the structural similarity between two DOM Trees
  *
  */
-public class StructureSimComputer implements SimilarityComputer<TreeNode>, Serializable{
+public class StructureSimComputer extends SimilarityComputer<TreeNode> implements Serializable{
 
     private static final long serialVersionUID = 5434501333215722663L;
     private final EditCost<TreeNode> costMetric;

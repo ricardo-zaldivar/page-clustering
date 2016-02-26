@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,8 +70,10 @@ public class FileClusterer {
 
             AtomicInteger skipCount = new AtomicInteger(0);
             List<TreeNode> trees = readTrees(skipCount);
-            List<String> ids = trees.stream().map(TreeNode::getExternalId).collect(Collectors.toList());
-
+            List<String> ids = new ArrayList<>();
+            for (TreeNode tree : trees) {
+                ids.add(tree.getExternalId());
+            }
             report.printf("Work Directory :%s\n", workDir.getAbsolutePath());
             report.printf("Parsed %d files and skipped %d files \n", trees.size(), skipCount.get());
             report.printf("Time taken to parse : %dms\n", timer.reset());
@@ -139,8 +142,10 @@ public class FileClusterer {
 
             AtomicInteger skipCount = new AtomicInteger(0);
             List<TreeNode> trees = readTrees(skipCount);
-            List<String> labels = trees.stream().map(TreeNode::getExternalId)
-                    .collect(Collectors.toList());
+            List<String> labels = new ArrayList<>();
+            for (TreeNode tree : trees) {
+                labels.add(tree.getExternalId());
+            }
             report.printf("Parsed %d files and skipped %d files \n", trees.size(), skipCount.get());
             report.printf("Work Directory :%s\n", workDir.getAbsolutePath());
             report.printf("Time taken to parse : %dms\n", timer.reset());
@@ -187,21 +192,24 @@ public class FileClusterer {
      */
     private List<TreeNode> readTrees(AtomicInteger skipCounter) throws IOException {
         List<TreeNode> trees = new ArrayList<>();
-        Stream<String> paths = Files.lines(listFile.toPath())
-                .map(String::trim)  //no spaces
-                .filter(s -> !(s.isEmpty() || s.startsWith("#")));// no empty lines and no comment lines
 
-        paths.forEach(p -> {
+        List<String> lines = Files.readAllLines(listFile.toPath(), Charset.forName("UTF-8"));
+        List<String> paths = new ArrayList<>();
+        for (String line : lines) {
+            line = line.trim();
+            if (line.isEmpty() || line.startsWith("#")) {
+                continue;
+            }
             try {
-                Document doc = ParseUtils.parseFile(p);
+                Document doc = ParseUtils.parseFile(line);
                 TreeNode tree = new TreeNode(doc.getDocumentElement(), null);
-                tree.setExternalId(p);
+                tree.setExternalId(line);
                 trees.add(tree);
             } catch (IOException | SAXException e) {
                 skipCounter.incrementAndGet();
-                LOG.error("Skip : {}, reason:{}", p, e.getMessage());
+                LOG.error("Skip : {}, reason:{}", line, e.getMessage());
             }
-        });
+        }
         return trees;
     }
 

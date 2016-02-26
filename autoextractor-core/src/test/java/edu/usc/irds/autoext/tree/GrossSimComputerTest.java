@@ -17,8 +17,19 @@ public class GrossSimComputerTest {
     @Test
     public void testCompute() throws Exception {
 
-        SimilarityComputer<String> caseSensitiveComputer = (obj1, obj2) -> obj1.equals(obj2) ? 1.0 : 0.0;
-        SimilarityComputer<String> caseInsensitiveComputer = (obj1, obj2) -> obj1.toLowerCase().equals(obj2.toLowerCase()) ? 1.0 : 0.0;
+        SimilarityComputer<String> caseSensitiveComputer = new SimilarityComputer<String>() {
+            @Override
+            public double compute(String obj1, String obj2) {
+                return obj1.equals(obj2) ? 1.0 : 0.0;
+            }
+        };
+
+        SimilarityComputer<String> caseInsensitiveComputer = new SimilarityComputer<String>() {
+            @Override
+            public double compute(String obj1, String obj2) {
+                return obj1.toLowerCase().equals(obj2.toLowerCase()) ? 1.0 : 0.0;
+            }
+        };
 
         GrossSimComputer<String> computer = new GrossSimComputer<>(Arrays.asList(caseSensitiveComputer, caseInsensitiveComputer), Arrays.asList(0.5, 0.5));
         assertEquals(1.0, computer.compute("abcd", "abcd"), 0.00001);

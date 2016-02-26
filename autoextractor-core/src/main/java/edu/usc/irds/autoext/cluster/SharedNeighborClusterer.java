@@ -34,8 +34,12 @@ import java.util.TreeSet;
 public class SharedNeighborClusterer {
 
     public static final Logger LOG = LoggerFactory.getLogger(SharedNeighborClusterer.class);
-    public static Comparator<Tuple2<Double, Integer>> descendingComparator =
-            (o1, o2) -> Double.compare(o2.pos0, o1.pos0);
+    public static Comparator<Tuple2<Double, Integer>> descendingComparator = new Comparator<Tuple2<Double, Integer>>() {
+        @Override
+        public int compare(Tuple2<Double, Integer> o1, Tuple2<Double, Integer> o2) {
+            return Double.compare(o2.pos0, o1.pos0);
+        }
+    };
 
     /**
      * checks if the clusters needs to be merged into one

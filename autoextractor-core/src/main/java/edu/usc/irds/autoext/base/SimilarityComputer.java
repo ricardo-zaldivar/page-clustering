@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
  * @author Thamme Gowda
  *
  */
-public interface SimilarityComputer<T> extends BiFunction<T, T, Double> {
+public abstract class SimilarityComputer<T> implements BiFunction<T, T, Double> {
 
     /**
      * computes similarity between two objects. The similarity score is on [0.0, 1.0] scale inclusive.
@@ -22,7 +22,7 @@ public interface SimilarityComputer<T> extends BiFunction<T, T, Double> {
      * @param obj2  the second object
      * @return the similarity score [0.0, 1.0]
      */
-    double compute(T obj1, T obj2);
+    public abstract double compute(T obj1, T obj2);
 
     /**
      * Glues this contract with Functional programming
@@ -32,7 +32,7 @@ public interface SimilarityComputer<T> extends BiFunction<T, T, Double> {
      * @see #compute(Object, Object)
      */
     @Override
-    default Double apply(T obj1, T obj2) {
+    public Double apply(T obj1, T obj2) {
         return this.compute(obj1, obj2);
     }
 }

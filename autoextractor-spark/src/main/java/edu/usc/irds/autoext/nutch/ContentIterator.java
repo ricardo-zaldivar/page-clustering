@@ -22,9 +22,16 @@ import java.util.function.Function;
  */
 public class ContentIterator extends AbstractIterator<Content> implements Iterator<Content> {
 
+    public static final class AcceptAllFilter implements Function<String, Boolean>, Serializable {
+
+        @Override
+        public Boolean apply(String s) {
+            return true;
+        }
+    }
     public static final Logger LOG = LoggerFactory.getLogger(ContentIterator.class);
-    public static final Function<String, Boolean> ACCEPT_ALL_FILTER =
-            (Serializable & Function<String, Boolean>) contentType -> true;
+
+    public static final Function<String, Boolean> ACCEPT_ALL_FILTER = new AcceptAllFilter();
 
     private long count;
     private final SequenceFile.Reader reader;

@@ -6,6 +6,7 @@ import edu.usc.irds.autoext.spark.utils.LangUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.nutch.protocol.Content;
 import org.apache.nutch.util.NutchConfiguration;
+import org.apache.spark.Dependency;
 import org.apache.spark.Partition;
 import org.apache.spark.SparkContext;
 import org.apache.spark.TaskContext;
@@ -40,7 +41,7 @@ public class NutchContentRDD extends RDD<Content> {
     public NutchContentRDD(SparkContext context,
                            List<String> parts,
                            Function<String, Boolean> contentTypeFilter) {
-        super(context, new ArrayBuffer<>(), CONTENT_TAG);
+        super(context, new ArrayBuffer<Dependency<?>>(), CONTENT_TAG);
         this.partitions = new ContentPartition[parts.size()];
         this.contentTypeFilter = contentTypeFilter;
         for (int i = 0; i < parts.size(); i++) {

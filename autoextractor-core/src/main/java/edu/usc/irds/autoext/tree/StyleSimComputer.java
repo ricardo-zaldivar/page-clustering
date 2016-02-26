@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Computes CSS style Similarity between two DOM trees
  */
-public class StyleSimComputer implements SimilarityComputer<TreeNode>, Serializable {
+public class StyleSimComputer extends SimilarityComputer<TreeNode> implements Serializable {
 
     private static final long serialVersionUID = 6680072428272456472L;
     private static XPathEvaluator xPathUtil = new XPathEvaluator();
@@ -61,6 +61,7 @@ public class StyleSimComputer implements SimilarityComputer<TreeNode>, Serializa
         }
         return result;
     }
+
 
     @Override
     public double compute(TreeNode obj1, TreeNode obj2) {
