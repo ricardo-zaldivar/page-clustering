@@ -42,7 +42,7 @@ class ContentCluster {
   var workDirName: String = null
 
   @Option(name = "-master", usage = "Spark master url")
-  var masterUrl: String = "local[2]"
+  var masterUrl: String = null
 
   @Option(name = "-sw", aliases = Array("--sim-weight"),
     usage = "weight used for aggregating structural and style similarity measures.\n" +
@@ -63,8 +63,12 @@ class ContentCluster {
   val htmlFilter:Function[String, lang.Boolean] = new ContentFilter("html")
 
   def init(): Unit = {
-    this.sc = new SparkContext(new SparkConf()
-      .setMaster(masterUrl).setAppName(appName))
+    val sConf = new SparkConf().setAppName(appName)
+    if (this.masterUrl != null) {
+      // else leave it to default one of spark submit
+      sConf.setMaster(masterUrl)
+    }
+    this.sc = new SparkContext(sConf)
     this.workDir = new Path(workDirName)
     val textCleanFilter: String => Boolean = p => !p.isEmpty && !p.startsWith("#")
     this.parts = Source.fromFile(pathListFile)
@@ -93,7 +97,6 @@ class ContentCluster {
     } else {
       similarityComputer = GrossSimComputer.createWebSimilarityComputer(structSimWeight)
     }
-
   }
 
   /**
