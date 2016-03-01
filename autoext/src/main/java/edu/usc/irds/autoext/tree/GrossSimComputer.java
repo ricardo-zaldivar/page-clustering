@@ -1,5 +1,6 @@
 package edu.usc.irds.autoext.tree;
 
+import edu.usc.irds.autoext.Config;
 import edu.usc.irds.autoext.base.SimilarityComputer;
 import edu.usc.irds.autoext.utils.Checks;
 
@@ -52,17 +53,14 @@ public class GrossSimComputer<T> extends SimilarityComputer<T> implements Serial
     }
 
     /**
-     k* A factory method for creating similarity computer that aggregates structural and stylistic measures
-     * @param structureSimWeight The fraction weight of weight for structural similarity.
-     *                           The remaining fraction, i.e. (1 - weight), will be taken as weight for style similarity
+     * A factory method for creating similarity computer that aggregates structural and stylistic measures
      * @return the similarity computer that internally aggregates structure and style measures;
      */
-    public static GrossSimComputer<TreeNode> createWebSimilarityComputer(double structureSimWeight){
+    public static GrossSimComputer<TreeNode> createWebSimilarityComputer(){
+        double structureSimWeight = Config.getInstance().getSimWeight();
         Checks.check(structureSimWeight <= 1.0 && structureSimWeight >= 0.0, "The weight should be in between [0.0, 1.0]");
-        ZSTEDComputer edComputer = new ZSTEDComputer();
-        StructureSimComputer structSimComputer = new StructureSimComputer(edComputer);
+        StructureSimComputer structSimComputer = new StructureSimComputer();
         StyleSimComputer styleSimComputer = new StyleSimComputer();
-
         List<SimilarityComputer<TreeNode>> similarityComputers = new ArrayList<>();
         similarityComputers.add(structSimComputer);
         similarityComputers.add(styleSimComputer);

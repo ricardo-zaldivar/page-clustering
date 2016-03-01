@@ -1,9 +1,13 @@
 package edu.usc.irds.autoext.tree;
 
+import edu.usc.irds.autoext.Config;
 import edu.usc.irds.autoext.base.EditCost;
 import edu.usc.irds.autoext.base.EditDistanceComputer;
 import edu.usc.irds.autoext.base.SimilarityComputer;
 import edu.usc.irds.autoext.utils.Checks;
+import edu.usc.irds.autoext.utils.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,14 +18,22 @@ import java.util.List;
  */
 public class StructureSimComputer extends SimilarityComputer<TreeNode> implements Serializable{
 
+    public static final Logger LOG = LoggerFactory.getLogger(StructureSimComputer.class);
+
     private static final long serialVersionUID = 5434501333215722663L;
     private final EditCost<TreeNode> costMetric;
     private EditDistanceComputer<TreeNode> distanceComputer;
 
+    public StructureSimComputer(){
+        String tedImpl = Config.getInstance().getTedImpl();
+        LOG.info("TED = {}", tedImpl);
+        this.distanceComputer = ReflectionUtils.instantiate(tedImpl);
+        this.costMetric = distanceComputer.getCostMetric();
+    }
+
     public StructureSimComputer(EditDistanceComputer<TreeNode> distanceComputer) {
         this(distanceComputer.getCostMetric());
         this.distanceComputer = distanceComputer;
-
     }
 
     public StructureSimComputer(EditCost<TreeNode> costMetric) {

@@ -39,7 +39,7 @@ public class GrossSimComputerTest {
 
     @Test
     public void testCreateWebSimilarityComputer() throws Exception {
-        GrossSimComputer<TreeNode> simComputer = GrossSimComputer.createWebSimilarityComputer(0.5);
+        GrossSimComputer<TreeNode> simComputer = GrossSimComputer.createWebSimilarityComputer();
 
         Document doc1 = ParseUtils.parseFile("src/test/resources/html/simple/1.html");
         Document doc2 = ParseUtils.parseFile("src/test/resources/html/simple/2.html");

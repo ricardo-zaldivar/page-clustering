@@ -52,81 +52,6 @@ public class FileClusterer {
             usage = "Path to directory to create intermediate files and reports")
     private  File workDir;
 
-
-    //This will be removed
-    @Deprecated
-    private void clusterDebug() throws IOException {
-
-        LOG.info("Create work directory ? {} ", workDir.mkdirs());
-        File reportFile = new File(workDir, REPORT_FILE);
-        try (PrintWriter report = new PrintWriter(
-                new BufferedWriter(new FileWriter(reportFile)))) {
-            Timer mainTimer = new Timer();
-            Timer timer = new Timer();
-            report.printf("Starting at : %d\n", timer.getStart());
-            report.printf("Input specified : %s\n", listFile.getAbsolutePath());
-
-            AtomicInteger skipCount = new AtomicInteger(0);
-            List<TreeNode> trees = readTrees(skipCount);
-            List<String> ids = new ArrayList<>();
-            for (TreeNode tree : trees) {
-                ids.add(tree.getExternalId());
-            }
-            report.printf("Work Directory :%s\n", workDir.getAbsolutePath());
-            report.printf("Parsed %d files and skipped %d files \n", trees.size(), skipCount.get());
-            report.printf("Time taken to parse : %dms\n", timer.reset());
-
-            //Step1: write ids/paths to separate file
-            File idsFile = new File(workDir, IDS_FILE);
-            Files.write(idsFile.toPath(), ids, Charset.forName("UTF-8"));
-            LOG.info("Wrote paths to {} ", idsFile.toPath());
-            report.printf("Wrote %d ids to %s file in %dms\n", ids.size(), idsFile, timer.reset());
-
-            //Step 2: write edit distances to CSV
-            ZSTEDComputer edComputer = new ZSTEDComputer();
-            //Step 3: write similarity to CSV
-            //write cluster to a file
-            double[][] distanceMatrix = edComputer.computeDistanceMatrix(trees);
-            report.printf("Computed distance matrix in %dms\n", timer.reset());
-            File distanceFile = new File(workDir, ED_DIST_FILE);
-            writeToCSV(distanceMatrix, distanceFile);
-            report.printf("Stored distance matrix in %dms\n", timer.reset());
-
-            //STEP 4: compute the similarity matrix
-            int[] sizes = new int[trees.size()];
-            String labels[] = new String[trees.size()];
-            for (int i = 0; i < trees.size(); i++) {
-                sizes[i] = trees.get(i).getSize();
-                labels[i] = trees.get(i).getExternalId();
-            }
-            report.printf("obtained tree sizes and labels in %dms\n", timer.reset());
-            StructureSimComputer computer = new StructureSimComputer(edComputer.getCostMetric());
-            double[][] similarityMatrix = computer.compute(sizes, distanceMatrix);
-            report.printf("Computed similarity matrix in %dms\n", timer.reset());
-            File similarityFile = new File(workDir, TREE_SIM_FILE);
-            writeToCSV(similarityMatrix, similarityFile);
-            report.printf("Stored similarity matrix in %dms\n", timer.reset());
-
-            //TODO: add style similarity and aggregate
-            //STEP 5: cluster
-            SharedNeighborClusterer clusterer = new SharedNeighborClusterer();
-            //TODO: make these configurable
-            double similarityThreshold = 0.75;
-            int k = 100;
-            report.printf("Clustering:: SimilarityThreshold=%f," +
-                    " no. of neighbors:%d\n", similarityThreshold, k);
-            List<List<String>> clusters = clusterer.cluster(similarityMatrix,
-                    labels, similarityThreshold, k);
-            report.printf("Computed clusters in %dms\n", timer.reset());
-            File clustersFile = new File(workDir, CLUSTER_FILE);
-            writeClusters(clusters, clustersFile);
-            report.printf("Wrote clusters in %dms\n", timer.reset());
-            report.printf("Done! Total time = %dms\n", mainTimer.read());
-        }
-        LOG.info("Done.. Report stored in {} ", reportFile.getAbsolutePath());
-    }
-
-
     public void cluster() throws IOException {
 
         LOG.info("Create work directory ? {} ", workDir.mkdirs());
@@ -155,8 +80,7 @@ public class FileClusterer {
             report.printf("Wrote %d ids to %s file in %dms\n", labels.size(), idsFile, timer.reset());
 
             //Step 2: Compute similarity and store to file
-            //TODO: make this configurable
-            GrossSimComputer<TreeNode> simComputer = GrossSimComputer.createWebSimilarityComputer(0.8);
+            GrossSimComputer<TreeNode> simComputer = GrossSimComputer.createWebSimilarityComputer();
             timer.reset();
             double[][] similarityMatrix = MatrixUtils.computeSymmetricMatrix(simComputer, trees);
             report.printf("Computed Gross similarity matrix in %dms\n", timer.reset());
@@ -192,7 +116,6 @@ public class FileClusterer {
         List<TreeNode> trees = new ArrayList<>();
 
         List<String> lines = Files.readAllLines(listFile.toPath(), Charset.forName("UTF-8"));
-        List<String> paths = new ArrayList<>();
         for (String line : lines) {
             line = line.trim();
             if (line.isEmpty() || line.startsWith("#")) {
