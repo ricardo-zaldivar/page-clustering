@@ -3,15 +3,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.usc.irds.autoext</groupId>
-    <artifactId>autoextractor</artifactId>
+    <artifactId>autoext-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
     <modules>
-        <module>autoextractor-core</module>
-        <module>autoextractor-spark</module>
+        <module>autoext</module>
+        <module>apted</module>
+        <module>autoext-spark</module>
     </modules>
     <packaging>pom</packaging>
 
-    <name>auto-extractor</name>
+    <name>autoext-parent</name>
     <url>http://irds.usc.edu</url>
 
     <properties>
