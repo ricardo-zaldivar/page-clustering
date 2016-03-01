@@ -26,8 +26,6 @@ TODO: update this file with the description of all new features.
 ```
 
 
-
-
 # Example Usage:
 ## 1. Structural Similarity Between HTML/XML documents
 <pre>

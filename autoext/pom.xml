@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>autoextractor</artifactId>
+        <artifactId>autoext-parent</artifactId>
         <groupId>edu.usc.irds.autoext</groupId>
         <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>autoextractor-core</artifactId>
+    <artifactId>autoext</artifactId>
     <packaging>jar</packaging>
 
-    <name>autoext-core</name>
+    <name>autoext</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -36,6 +36,11 @@
             <groupId>args4j</groupId>
             <artifactId>args4j</artifactId>
             <version>${args4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.usc.irds.ted</groupId>
+            <artifactId>apted</artifactId>
+            <version>0.1.1</version>
         </dependency>
     </dependencies>
     <build>
