@@ -95,7 +95,7 @@ class ContentCluster {
       // only structure similarity
       similarityComputer = new StructureSimComputer(new DefaultEditCost)
     } else {
-      similarityComputer = GrossSimComputer.createWebSimilarityComputer(structSimWeight)
+      similarityComputer = GrossSimComputer.createWebSimilarityComputer()
     }
   }
 
