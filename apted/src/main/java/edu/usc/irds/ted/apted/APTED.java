@@ -24,6 +24,7 @@ package edu.usc.irds.ted.apted;
 import edu.usc.irds.ted.apted.util.LabelDictionary;
 import edu.usc.irds.ted.apted.util.LblTree;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Stack;
 
@@ -49,12 +50,13 @@ import java.util.Stack;
  * @author Mateusz Pawlik
  *
  */
-public class APTED
-{
+public class APTED implements Serializable {
+
 	private static final byte LEFT = 0;
     private static final byte RIGHT = 1;
     private static final byte INNER = 2;
     private static final byte HEAVY = 2;
+    private static final long serialVersionUID = -1246850264404016235L;
     private InfoTree_PLUS it1;
     private InfoTree_PLUS it2;
     private int size1;

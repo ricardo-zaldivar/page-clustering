@@ -23,6 +23,7 @@ package edu.usc.irds.ted.apted.util;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -33,8 +34,9 @@ import java.util.Vector;
  *
  */
 public class LblTree extends DefaultMutableTreeNode
-    implements Comparable
-{
+    implements Comparable, Serializable {
+
+    private static final long serialVersionUID = -8076996040097372065L;
 
     public LblTree(String label, int treeID)
     {

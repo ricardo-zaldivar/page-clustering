@@ -21,35 +21,33 @@
 
 package edu.usc.irds.ted.apted.util;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
 /**
  * Dictionary to store labels to integers mappings.
- * 
+ *
  * @author Nikolaus Augsten
  *
  */
-public class LabelDictionary
-{
+public class LabelDictionary implements Serializable {
 
-    public LabelDictionary()
-    {
+    private static final long serialVersionUID = -5657129208276560195L;
+
+    public LabelDictionary() {
         newLabelsAllowed = true;
         count = 0;
         StrInt = new Hashtable();
         IntStr = new Hashtable();
     }
 
-    public int store(String label)
-    {
-        if(StrInt.containsKey(label))
+    public int store(String label) {
+        if (StrInt.containsKey(label))
             return ((Integer)StrInt.get(label)).intValue();
-        if(!newLabelsAllowed)
-        {
+        if (!newLabelsAllowed) {
             return -1;
-        } else
-        {
+        } else {
             Integer intKey = new Integer(count++);
             StrInt.put(label, intKey);
             IntStr.put(intKey, label);

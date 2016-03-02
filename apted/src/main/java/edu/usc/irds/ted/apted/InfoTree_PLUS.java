@@ -24,6 +24,7 @@ package edu.usc.irds.ted.apted;
 import edu.usc.irds.ted.apted.util.LabelDictionary;
 import edu.usc.irds.ted.apted.util.LblTree;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -32,11 +33,11 @@ import java.util.*;
  * @author Mateusz Pawlik
  *
  */
-public class InfoTree_PLUS
-{
+public class InfoTree_PLUS implements Serializable {
 
-    public InfoTree_PLUS(LblTree aInputTree, LabelDictionary aLd)
-    {
+    private static final long serialVersionUID = 7601954909338612571L;
+
+    public InfoTree_PLUS(LblTree aInputTree, LabelDictionary aLd) {
         sizeTmp = 0;
         descSizesTmp = 0;
         krSizesSumTmp = 0;
