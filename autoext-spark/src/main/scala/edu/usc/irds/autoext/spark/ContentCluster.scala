@@ -55,7 +55,7 @@ class ContentCluster {
 
   var sc : SparkContext = null
   var workDir:Path = null
-  var parts: List[String] = null
+  var parts: Array[String] = null
   var domainsDir: Path = null
   var simDir: Path = null
   var hConf: Configuration = null
@@ -71,8 +71,11 @@ class ContentCluster {
     this.sc = new SparkContext(sConf)
     this.workDir = new Path(workDirName)
     val textCleanFilter: String => Boolean = p => !p.isEmpty && !p.startsWith("#")
-    this.parts = Source.fromFile(pathListFile)
-      .getLines().toList.map(s => s.trim).filter(textCleanFilter)
+    this.parts = sc.textFile(pathListFile)
+      .map(l => l.trim )
+      .filter(l => !l.isEmpty && !l.startsWith("#"))
+      .collect()
+    LOG.info("Found {} parts from input file.", this.parts.length)
     this.domainsDir = new Path(workDir, DOMAINS_DIR)
     this.simDir = new Path(workDir, SIMILARITY_DIR)
     this.hConf = new Configuration
@@ -105,7 +108,7 @@ class ContentCluster {
   private def separateDomains() {
     val filter2 = new ContentFilter("html")
 
-    new NutchContentRDD(sc, parts.asJava, filter2)
+    new NutchContentRDD(sc, parts.toList.asJava, filter2)
       .map(c => (new Text(new URL(c.getUrl).getHost), c))
       .saveAsHadoopFile(domainsDir.toString, classOf[Text], classOf[Content],
         classOf[RDDMultipleOutputFormat[_, _]])
