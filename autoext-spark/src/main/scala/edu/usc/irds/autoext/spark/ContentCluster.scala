@@ -27,8 +27,6 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
-
-
 /**
   * Content Cluster APP using Spark Scala API
   */
@@ -44,6 +42,9 @@ class ContentCluster {
   @Option(name = "-master", usage = "Spark master url")
   var masterUrl: String = null
 
+  @Option(name = "-goal", usage = "Goal of job {separate, similarity, cluster, all}", required = true)
+  var command: String = null
+
   @Option(name = "-sw", aliases = Array("--sim-weight"),
     usage = "weight used for aggregating structural and style similarity measures.\n" +
       "Range : [0.0, 1.0] inclusive\n" +
@@ -51,7 +52,7 @@ class ContentCluster {
       "\t1.0 disables style similarity and thus only structural similarity will be used\n")
   var structSimWeight:Double = 0.0
 
-  var appName = "Web documents Clustering"
+  var appName = "Web documents Clustering - " + System.currentTimeMillis()
 
   var sc : SparkContext = null
   var workDir:Path = null
@@ -257,19 +258,25 @@ object ContentCluster {
         System.exit(1)
     }
 
+    val runAll = instance.command == "all"
     LOG.info("Initializing...")
     instance.init()
     LOG.info("Initialization complete")
-    LOG.info("Separating domains...")
-    instance.separateDomains()
-    LOG.info("Domains separation complete")
-    LOG.info("Computing similarity...")
-    instance.computeSimilarity()
-    LOG.info("Similarity Computation done...")
-
-    LOG.info("Clustering...")
-    instance.cluster()
-    LOG.info("Computing complete!")
+    if (runAll || instance.command == "separate") {
+      LOG.info("Separating domains...")
+      instance.separateDomains()
+      LOG.info("Domains separation complete")
+    }
+    if (runAll || instance.command == "similarity") {
+      LOG.info("Computing similarity...")
+      instance.computeSimilarity()
+      LOG.info("Similarity Computation done...")
+    }
+    if (runAll || instance.command == "cluster") {
+      LOG.info("Clustering...")
+      instance.cluster()
+      LOG.info("Computing complete!")
+    }
   }
 }
 
