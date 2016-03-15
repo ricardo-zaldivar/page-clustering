@@ -4,7 +4,7 @@
 
     <groupId>edu.usc.irds.autoext</groupId>
     <artifactId>autoext-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <modules>
         <module>autoext</module>
         <module>apted</module>
