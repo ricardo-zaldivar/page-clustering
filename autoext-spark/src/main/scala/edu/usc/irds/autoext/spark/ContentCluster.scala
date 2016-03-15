@@ -25,7 +25,6 @@ import org.xml.sax.InputSource
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
 
 /**
   * Content Cluster APP using Spark Scala API
@@ -81,10 +80,14 @@ class ContentCluster {
     this.simDir = new Path(workDir, SIMILARITY_DIR)
     this.hConf = new Configuration
     val fs = FileSystem.get(hConf)
-    fs.mkdirs(workDir)
-    fs.mkdirs(new Path(simDir, ENTRIES_DIR))
-    fs.mkdirs(new Path(simDir, MATRIX_DIR))
 
+    Array(workDir, new Path(simDir, ENTRIES_DIR),
+      new Path(simDir, ENTRIES_DIR)).foreach(p => {
+        if(!fs.exists(p)){
+          LOG.info("Creating directory %s", p)
+          fs.mkdirs(p)
+        }
+    })
 
     // validate
     if (structSimWeight < 0.0 || structSimWeight > 1.0) {
