@@ -19,6 +19,7 @@ import scala.collection.Iterator;
 import scala.collection.mutable.ArrayBuffer;
 import scala.reflect.ClassTag;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +31,11 @@ public class NutchContentRDD extends RDD<Content> {
     public static final Logger LOG = LoggerFactory.getLogger(NutchContentRDD.class);
     private static final ClassTag<Content> CONTENT_TAG = LangUtils.getClassTag(Content.class);
 
+    /**
+     * In defensive mode, this RDD ignores errors and tries
+     * to do the best by ignoring errors
+     */
+    private boolean defensive = true;
     private final Function<String, Boolean> contentTypeFilter;
     private final ContentPartition[] partitions;
 
@@ -47,17 +53,23 @@ public class NutchContentRDD extends RDD<Content> {
         for (int i = 0; i < parts.size(); i++) {
             partitions[i] = new ContentPartition(i, parts.get(i));
         }
-
     }
 
     @Override
     public Iterator<Content> compute(Partition split, TaskContext context) {
+        Path path = new Path(partitions[split.index()].getPath());
         try {
-            Path path = new Path(partitions[split.index()].getPath());
+            LOG.info("Reading {}", path);
             return new ContentIterator(path, NutchConfiguration.create(), contentTypeFilter);
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            if (defensive) {
+                LOG.error("Skipped: {} due to {}", path, e.getMessage());
+                //Stick an empty buffer
+                return new ArrayBuffer<Content>().iterator();
+            } else { // break
+                LOG.error(e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
         }
     }
 
