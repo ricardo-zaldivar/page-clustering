@@ -1,4 +1,4 @@
-package edu.usc.irds.autoext.dfs;
+package edu.usc.irds.autoext.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 /**
  * An utility to count number of records in a sequence file
@@ -25,15 +24,17 @@ public class RecCounter {
 
     @Option(name = "-list", forbids = {"-in"},
             usage = "List of Sequence Files")
-    private String pathListFile = null;
+    protected String pathListFile = null;
 
     @Option(name = "-out", usage = "Output file path.")
-    private String outPath = null;
+    protected String outPath = null;
 
     @Option(name = "-in", forbids = {"-list"})
-    private String inPath = null;
+    protected String inPath = null;
 
-    private Configuration conf;
+    protected List<String> paths = null;
+
+    protected Configuration conf = new Configuration();
 
     /**
      * Counts records in a sequence file
@@ -55,20 +56,7 @@ public class RecCounter {
     }
 
     private void count() throws IOException {
-
-        this.conf = new Configuration();
         FileSystem fs = FileSystem.get(conf);
-        List<String> paths;
-        if (pathListFile != null) {
-            try(FSDataInputStream stream = fs.open(new Path(pathListFile))){
-                paths = IOUtils.readLines(stream);
-            }
-        } else if (inPath != null) {
-            paths = new ArrayList<>();
-            paths.add(inPath);
-        } else {
-            throw new RuntimeException("this shouldn't be happening!");
-        }
         try (PrintWriter out = outPath == null ?
                 new PrintWriter(System.out) :
                 new PrintWriter(fs.create(new Path(outPath), true))){
@@ -83,18 +71,35 @@ public class RecCounter {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        RecCounter counter = new RecCounter();
-        CmdLineParser parser = new CmdLineParser(counter);
+    public void parseArgs(String[] args) throws IOException {
+        CmdLineParser parser = new CmdLineParser(this);
         try {
             parser.parseArgument(args);
-            if (counter.inPath == null && counter.pathListFile == null){
+            if (inPath == null && pathListFile == null){
                 throw new CmdLineException("Either -list or -in is required");
             }
         } catch (CmdLineException e) {
             parser.printUsage(System.out);
             System.exit(-1);
         }
+
+        FileSystem fs = FileSystem.get(conf);
+        if (pathListFile != null) {
+            try(FSDataInputStream stream = fs.open(new Path(pathListFile))){
+                paths = IOUtils.readLines(stream);
+            }
+        } else if (inPath != null) {
+            paths = new ArrayList<>();
+            paths.add(inPath);
+        } else {
+            throw new RuntimeException("this shouldn't be happening!");
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        RecCounter counter = new RecCounter();
+        counter.parseArgs(args);
         counter.count();
     }
 
