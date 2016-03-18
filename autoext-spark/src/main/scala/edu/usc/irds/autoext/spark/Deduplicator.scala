@@ -26,20 +26,20 @@ class Deduplicator extends CliTool{
       .registerKryoClasses(Array(classOf[Text], classOf[Content]))
     LOG.info("Creating Spark Context")
     val ctx = new SparkContext(sConf)
-    val paths:Array[String] = ctx.textFile(listFile)
-      .map(s => s.trim)
-      .filter(s => !s.isEmpty && !s.startsWith("#"))
-      .collect()
+    var paths:Array[String] = ctx.textFile(listFile).collect()
     LOG.info(s"Found ${paths.length} input paths in list file")
     val rdds = new Array[RDD[(Text, Content)]](paths.length)
     for( i <- paths.indices){
       rdds(i) = ctx.sequenceFile(paths(i), classOf[Text], classOf[Content])
     }
-    ctx.union(rdds) // club all parts
-      .map(rec => (rec._1.toString, rec._2))
-      .reduceByKey((v1, v2) => v1)   /// distinct keys
-      .map(rec => (new Text(rec._1), rec._2))
-      .saveAsHadoopFile(output, classOf[Text], classOf[Content], classOf[SequenceFileOutputFormat[_,_]]) // save it
+    val rdd = ctx.union(rdds) // club all parts
+
+    //Method 1 : group by followed by a map to pick unique value
+    rdd.groupByKey()
+      .map(rec => (rec._1, rec._2.iterator.next()))
+      .saveAsHadoopFile(output, classOf[Text],
+        classOf[Content], classOf[SequenceFileOutputFormat[Text,Content]]) // save it
+
     LOG.info(s"Done. Saved output at $output")
     LOG.info("Stopping the Spark context")
     ctx.stop()
