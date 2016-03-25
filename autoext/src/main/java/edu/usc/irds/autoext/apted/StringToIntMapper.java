@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Uses counters for mapping.
  * Optionally writes contents to file
  */
-public class StringToIntMapper implements Function<String, Integer>, AutoCloseable {
+public class StringToIntMapper implements Function<String, Integer>, AutoCloseable, Serializable {
 
     private Map<String, Integer> map = new HashMap<>();
     private Map<Integer, String> reverseMap = new HashMap<>();

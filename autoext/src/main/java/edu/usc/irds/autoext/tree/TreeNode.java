@@ -64,6 +64,17 @@ public class TreeNode implements Serializable {
         }
     }
 
+    /**
+     *Creates a tree node object
+     * @param innerNode the DOM API node
+     * @param externalId The external Id for this tree
+     */
+    public static TreeNode create(Node innerNode, String externalId){
+        TreeNode tree = new TreeNode(innerNode, null);
+        tree.setExternalId(externalId);
+        return tree;
+    }
+
     public String getNodeName() {
         return nodeName;
     }
