@@ -45,7 +45,9 @@ class ContentSimilarityComputer extends CliTool {
 
   def run(): Unit = {
     LOG.info("Starting Spark Context for similarity Computer.")
-    val conf = new SparkConf().setAppName(classOf[ContentSimilarityComputer].getName)
+    val conf = new SparkConf()
+      .setAppName(classOf[ContentSimilarityComputer].getName)
+      .registerKryoClasses(Array(classOf[Text], classOf[Content]))
     val sc = new SparkContext(conf)
 
     // validate
