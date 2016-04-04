@@ -48,17 +48,24 @@ public class SharedNeighborClusterer {
      * @param simThreshold minimum threshold to consider if the clusters are similar
      * @return true if clusters are similar; false otherwise
      */
-    public boolean areClustersSimilar(BitSet i, BitSet j, double simThreshold){
-
-        int a = i.cardinality();
-        int b = j.cardinality();
-        BitSet intersection = (BitSet) i.clone();
-        intersection.and(j);
-        int aIntersectB = intersection.cardinality();
-        double similarity = (double) aIntersectB / (a + b - aIntersectB);
-        return similarity >= simThreshold;
+    public static boolean areClustersSimilar(BitSet i, BitSet j, double simThreshold){
+        return findOverlap(i, j) >= simThreshold;
     }
 
+    /**
+     * Finds the overlap between two bit sectors
+     * @param first first bitset
+     * @param second second bitset
+     * @return overlap percent normalized to [0.0 1.0]
+     */
+    public static double findOverlap(BitSet first, BitSet second) {
+        int a = first.cardinality();
+        int b = second.cardinality();
+        BitSet intersection = (BitSet) first.clone();
+        intersection.and(second);
+        int aIntersectB = intersection.cardinality();
+        return (double) aIntersectB / (a + b - aIntersectB);
+    }
 
     /**
      * Clusters documents
@@ -175,7 +182,13 @@ public class SharedNeighborClusterer {
     }
 
     public static void main(String[] args) throws IOException, SAXException {
-        String dir = "/home/tg/work/data/htmls/yellowpages/test2";
+        if (args.length != 1) {
+            System.err.println("Invalid Args!");
+            System.err.println("Usage : <path to directory of html files>");
+            System.exit(1);
+            return;
+        }
+        String dir = args[0];
         String[] fileNames = new File(dir).list();
         File[] files = new File(dir).listFiles();
 
@@ -189,6 +202,6 @@ public class SharedNeighborClusterer {
         double[][] sims = computer.compute(nodes);
         SharedNeighborClusterer clusterer = new SharedNeighborClusterer();
         List<List<String>> list = clusterer.cluster(sims, fileNames, 0.75, 100);
-
+        System.out.println(list);
     }
 }
