@@ -18,7 +18,7 @@
         <scala.version>2.10</scala.version>
         <spark.version>1.5.0</spark.version>
         <nutch.version>1.11</nutch.version>
-        <exec.mainClass>edu.usc.irds.autoext.spark.ContentCluster</exec.mainClass>
+        <exec.mainClass>edu.usc.irds.autoext.spark.Main</exec.mainClass>
     </properties>
 
     <dependencies>

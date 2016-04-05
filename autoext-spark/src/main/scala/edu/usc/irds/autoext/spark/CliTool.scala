@@ -17,7 +17,7 @@ trait CliTool {
       case e:CmdLineException =>
         System.err.println(e.getMessage)
         parser.printUsage(System.err)
-        System.exit(-1)
+        System.exit(1)
     }
   }
 }

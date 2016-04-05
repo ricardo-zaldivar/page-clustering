@@ -10,19 +10,12 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.kohsuke.args4j.Option
 import scala.collection.JavaConversions._
 
-
 /**
   * Shared Near Neighbor Clustering implemented using GraphX on spark
   *
   * @author Thamme Gowda N.
   */
-class SharedNeighborCuster extends CliTool {
-
-  @Option(name = "-in", usage = "Path to input file having pairwise similarity matrix entries.", required = true)
-  var matrixFile : String = null
-
-  @Option(name = "-out", usage = "Path to output directory to store clusters", required = true)
-  var outFile:String = null
+class SharedNeighborCuster extends IOSparkJob {
 
   @Option(name = "-sim", aliases = Array("--similarityThreshold"),
     usage = "if two items have similarity above this value," +
@@ -34,23 +27,14 @@ class SharedNeighborCuster extends CliTool {
     " then those clusters will be collapsed/merged into same cluster. Range:[0.0, 1.0]")
   var sharedNeighborThreshold: Double = 0.8
 
-  @Option(name = "-master", usage = "Spark Master. Not required if the job is started via spark-submit command, " +
-    " else specify the master name/url. Example: local[*]")
-  var sparkMaster:String = null
-
   def run(): Unit ={
-    val conf = new SparkConf()
-      .setAppName(getClass.getName + " - " + matrixFile.split("/").last)
-    if (sparkMaster != null) {
-      conf.setMaster(sparkMaster)
-    }
-    val sc = new SparkContext(conf)
 
     val similarityThreshold = this.similarityThreshold //Local variable serialization
     val sharedNeighborThreshold = this.sharedNeighborThreshold
 
     //STEP : Input set of similarity matrix
-    var entryRDD:RDD[MatrixEntry] = sc.objectFile[MatrixEntry](matrixFile)
+    var entryRDD:RDD[MatrixEntry] = sc.union(
+      getInputPaths().map(sc.objectFile[MatrixEntry](_)))
 
     //STEP : Initial set of neighbors
     entryRDD = entryRDD.filter(e => e.value >= similarityThreshold).cache()
@@ -138,7 +122,7 @@ class SharedNeighborCuster extends CliTool {
       s"$id,${list.size}," + list.mkString(",")
     }).cache()
 
-    clusters.saveAsTextFile(outFile)
+    clusters.saveAsTextFile(outPath)
     println(s"Total Clusters = ${clusters.count()}");
     sc.stop()
   }
@@ -148,8 +132,6 @@ class SharedNeighborCuster extends CliTool {
 object SharedNeighborCuster {
 
   def main(args: Array[String]) {
-    val clusterer = new SharedNeighborCuster
-    clusterer.parseArgs(args)
-    clusterer.run()
+    new SharedNeighborCuster().run(args)
   }
 }
