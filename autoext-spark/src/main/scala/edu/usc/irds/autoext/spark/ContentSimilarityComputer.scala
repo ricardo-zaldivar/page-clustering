@@ -33,12 +33,12 @@ class ContentSimilarityComputer extends IOSparkJob {
   def run(): Unit = {
 
     simComputer = simFunc match {
-      case STRUCTURE => new StructureSimComputer(new DefaultEditCost)
+      case STRUCTURE => new StructureSimComputer()
       case STYLE => new StyleSimComputer()
       case _ => throw new IllegalArgumentException(s"Similarity function $simFunc is not supported")
     }
     val rdd = sc.union(getInputPaths().map(sc.sequenceFile(_, classOf[Text], classOf[Content])))
-    var (idRdd, entryRDD) = computeSimilarity(rdd)
+    val (idRdd, entryRDD) = computeSimilarity(rdd)
 
     LOG.info(s"Storing Ids to URL map at $outPath (CSV File)")
     idRdd.map({case(idx, url) => s"$idx,$url"}).saveAsTextFile(outPath + "-ids")
