@@ -10,6 +10,7 @@ object Main {
     "merge" -> (classOf[ContentMerge], "Merges (smaller) part files into one large sequence file."),
     "similarity" -> (classOf[ContentSimilarityComputer], "Computes similarity between documents."),
     "sncluster" -> (classOf[SharedNeighborCuster], "Cluster using Shared near neighbor algorithm."),
+    "simcombine" -> (classOf[SimilarityCombiner], "Combines two similarity measures on a linear scale."),
     "dedup" -> (classOf[DeDuplicator], "Removes duplicate documents (exact url matches)."),
     "d3export" -> (classOf[ContentSimilarityComputer], "Exports clusters into most popular d3js format for clusters.")
   )
