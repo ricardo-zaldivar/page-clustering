@@ -10,8 +10,7 @@ import scala.collection.JavaConverters._
 /**
   * This CLI Tool exports clusters into most common format used by d3js charts.
   */
-object D3Export extends IOSparkJob{
-
+class D3Export extends IOSparkJob {
   @Option(name="-ids", usage = "Path to directory/file having index to id mapping. Optional.")
   var idsFile:String = null
 
@@ -35,8 +34,11 @@ object D3Export extends IOSparkJob{
     D3JsFormat.storeClusters(outPath, "Clusters 1", clusters, idsMap, 10.0f)
     LOG.info("All done")
   }
+}
+
+object D3Export {
 
   def main(args: Array[String]) {
-    run(args)
+    new D3Export().run(args)
   }
 }

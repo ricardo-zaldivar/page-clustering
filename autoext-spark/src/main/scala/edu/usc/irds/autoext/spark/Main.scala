@@ -12,7 +12,7 @@ object Main {
     "sncluster" -> (classOf[SharedNeighborCuster], "Cluster using Shared near neighbor algorithm."),
     "simcombine" -> (classOf[SimilarityCombiner], "Combines two similarity measures on a linear scale."),
     "dedup" -> (classOf[DeDuplicator], "Removes duplicate documents (exact url matches)."),
-    "d3export" -> (classOf[ContentSimilarityComputer], "Exports clusters into most popular d3js format for clusters.")
+    "d3export" -> (classOf[D3Export], "Exports clusters into most popular d3js format for clusters.")
   )
 
   def printAndExit(exitCode:Int = 0, msg:String = "Usage "): Unit ={
