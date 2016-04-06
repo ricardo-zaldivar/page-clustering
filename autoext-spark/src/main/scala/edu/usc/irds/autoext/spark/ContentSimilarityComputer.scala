@@ -39,8 +39,10 @@ class ContentSimilarityComputer extends IOSparkJob {
     }
     val rdd = sc.union(getInputPaths().map(sc.sequenceFile(_, classOf[Text], classOf[Content])))
     var (idRdd, entryRDD) = computeSimilarity(rdd)
-    entryRDD = entryRDD.cache()
+
+    LOG.info(s"Storing Ids to URL map at $outPath (CSV File)")
     idRdd.map({case(idx, url) => s"$idx,$url"}).saveAsTextFile(outPath + "-ids")
+
     LOG.info(s"Storing Entries at $outPath (object file)")
     entryRDD.saveAsObjectFile(outPath)
   }
@@ -51,6 +53,10 @@ class ContentSimilarityComputer extends IOSparkJob {
     */
   private def  computeSimilarity(input: RDD[(Text, Content)])
   : (RDD[(Long, String)], RDD[MatrixEntry]) ={
+    // local variable serialization, otherwise we need to serialize 'this' whole object
+    val LOG = this.LOG
+    val computer = simComputer
+
     val rdd = input.filter(t => t._2.getContentType.contains("ml") || t._2.getContentType.contains("text"))//get only text or html
       .map(t => (new Text(t._1), cloneContent(t._2)))
 
@@ -90,7 +96,7 @@ class ContentSimilarityComputer extends IOSparkJob {
     // throw away lower diagonal
     pairs = pairs.filter({case ((i, t1), (j, t2)) => i >= j}).cache()
     LOG.info("Num Partitions: {}",  pairs.partitions.length)
-    val computer = simComputer // local variable serialization, otherwise we need to serialize 'this' whole object
+
     val entryRDD: RDD[MatrixEntry] = pairs.flatMap({ case ((i, treeI), (j, treeJ)) =>
         val res =
         if (i == j) {
