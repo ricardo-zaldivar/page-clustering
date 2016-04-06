@@ -8,11 +8,11 @@ import org.kohsuke.args4j.{CmdLineParser, Option}
 trait IOSparkJob extends SparkJob {
 
   @Option(name = "-in", forbids = Array("-list"),
-    usage = "path to input file/folder having input data")
+    usage = "path to a file/folder having input data")
   var inputPath: String = null
 
   @Option(name = "-list", forbids=Array("-in"),
-    usage = "path to input file which has paths to files which have data (one path per line).")
+    usage = "path to a file which contains many input paths (one path per line).")
   var listFilePath: String = null
 
   @Option(name = "-out", required = true, usage = "Path to file/folder where the output shall be stored")
