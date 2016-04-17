@@ -77,7 +77,6 @@ class ContentSimilarityComputer extends IOSparkJob {
       .map(t => (new Text(t._1), cloneContent(t._2)))
 
     var treeRDD: RDD[(Text, TreeNode)] = rdd.map({case (key, content) =>
-      LOG.debug("Parsing: {}", content.getUrl)
       var stream: ByteArrayInputStream = null
       var res: (Text, TreeNode) = null
       try {
@@ -100,7 +99,7 @@ class ContentSimilarityComputer extends IOSparkJob {
       res
     }).filter(_ != null)
 
-    treeRDD = treeRDD.cache() //cache here so that spark dont end up re-parsing again and again
+    treeRDD = treeRDD.persist() //cache here so that spark dont end up re-parsing again and again
 
     val iRdd: RDD[(Long, TreeNode)] = treeRDD
       .zipWithIndex()
