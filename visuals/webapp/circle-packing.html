@@ -26,9 +26,26 @@
     .node--leaf {
         pointer-events: none;
     }
-
 </style>
+<script type="text/javascript">
+    function reloadInput(){
+        file = document.getElementById("file").files[0];
+        reader = new FileReader();
+        reader.onload = function(e){
+            data = JSON.parse(reader.result)
+            console.log(data)
+            loadVisualization(data)
+        };
+        reader.readAsText(file);
+
+    }
+</script>
 <body>
+<div>
+    <h2> Choose Clusters JSON File :: </h2>
+    <input type="file" id="file" />
+    <button type="submit" name="Visualize" onclick="reloadInput()">Visualize</button>
+</div>
 <script src="js/d3.min.js"></script>
 <script>
 
@@ -51,11 +68,9 @@
             .append("g")
             .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
 
-    var dataFile = "flare.json"
-    dataFile = "data/c1.json" //TODO: make this configurable via UI
-    d3.json(dataFile, function(error, root) {
-        if (error) throw error;
 
+    function loadVisualization(root){
+        svg.selectAll("*").remove()
         var focus = root,
                 nodes = pack.nodes(root),
                 view;
@@ -105,8 +120,20 @@
             node.attr("transform", function(d) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
             circle.attr("r", function(d) { return d.r * k; });
         }
+
+    }
+
+
+    /*
+    var dataFile = "flare.json"
+    d3.json(dataFile, function(error, root) {
+        if (error) throw error;
+        loadVisualization(root)
     });
+    */
 
     d3.select(self.frameElement).style("height", diameter + "px");
 
 </script>
+</body>
+</html>
