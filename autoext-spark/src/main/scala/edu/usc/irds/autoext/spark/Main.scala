@@ -16,6 +16,8 @@
  */
 package edu.usc.irds.autoext.spark
 
+import edu.usc.irds.autoext.hdfs.RawToSeq
+
 object Main {
 
   val cmds = Map[String, (Class[_], String)](
@@ -28,7 +30,8 @@ object Main {
     "sncluster" -> (classOf[SharedNeighborCuster], "Cluster using Shared near neighbor algorithm."),
     "simcombine" -> (classOf[SimilarityCombiner], "Combines two similarity measures on a linear scale."),
     "dedup" -> (classOf[DeDuplicator], "Removes duplicate documents (exact url matches)."),
-    "d3export" -> (classOf[D3Export], "Exports clusters into most popular d3js format for clusters.")
+    "d3export" -> (classOf[D3Export], "Exports clusters into most popular d3js format for clusters."),
+    "createseq" -> (classOf[RawToSeq], "Creates a sequence file (compatible with Nutch Segment) from raw HTML files.")
   )
 
   def printAndExit(exitCode:Int = 0, msg:String = "Usage "): Unit ={
