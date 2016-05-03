@@ -1,6 +1,6 @@
 package edu.usc.irds.autoext.hdfs
 
-import java.io.{ByteArrayOutputStream, File}
+import java.io.File
 import java.nio.file
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
