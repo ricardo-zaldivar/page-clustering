@@ -27,25 +27,31 @@
         pointer-events: none;
     }
 </style>
-<script type="text/javascript">
-    function reloadInput(){
-        file = document.getElementById("file").files[0];
-        reader = new FileReader();
-        reader.onload = function(e){
-            data = JSON.parse(reader.result)
-            console.log(data)
-            loadVisualization(data)
-        };
-        reader.readAsText(file);
 
-    }
-</script>
 <body>
-<div>
-    <h2> Choose Clusters JSON File :: </h2>
-    <input type="file" id="file" />
-    <button type="submit" name="Visualize" onclick="reloadInput()">Visualize</button>
-</div>
+ <!-------------->
+      <div>
+        <h2> Choose Clusters JSON File </h2> <p>Format = flares.json</p>
+        <input type="file" id="file" />
+      </div>
+      <hr/>
+      <h2 id="heading"></h2>
+       <script type="text/javascript">
+           document.getElementById("file").onchange = function(){
+              file = document.getElementById("file").files[0];
+              document.getElementById("heading").textContent = "Visualizing : " + file.name;
+
+              reader = new FileReader();
+              reader.onload = function(e){
+                  data = JSON.parse(reader.result)
+                  console.log("Loading Clusters...");
+                  loadClusters(data)
+              };
+              reader.readAsText(file);   
+          }
+      </script>
+    <!------------>
+    
 <script src="js/d3.min.js"></script>
 <script>
 
@@ -69,7 +75,7 @@
             .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
 
 
-    function loadVisualization(root){
+    function loadClusters(root){
         svg.selectAll("*").remove()
         var focus = root,
                 nodes = pack.nodes(root),
