@@ -14,7 +14,7 @@ An intelligent extractor library which learns the structures of the input web pa
 
 If you use this work, please cite:
 
-{{{
+```
 @inproceedings{gowda2016clustering,
   title={Clustering Web Pages Based on Structure and Style Similarity (Application Paper)},
   author={Gowda, Thamme and Mattmann, Chris A},
@@ -23,7 +23,7 @@ If you use this work, please cite:
   year={2016},
   organization={IEEE}
 }
-}}}
+```
 
 
 # References :
