@@ -10,6 +10,21 @@ An intelligent extractor library which learns the structures of the input web pa
 * [Thamme Gowda, USC](mailto:tgowdan@gmail.com)
 * [Chris Mattmann, USC & NASA JPL]()
 
+# Citation:
+
+If you use this work, please cite:
+
+{{{
+@inproceedings{gowda2016clustering,
+  title={Clustering Web Pages Based on Structure and Style Similarity (Application Paper)},
+  author={Gowda, Thamme and Mattmann, Chris A},
+  booktitle={Information Reuse and Integration (IRI), 2016 IEEE 17th International Conference on},
+  pages={175--180},
+  year={2016},
+  organization={IEEE}
+}
+}}}
+
 
 # References :
 + K. Zhang and D. Shasha. 1989. "Simple fast algorithms for the editing distance between trees and related problems". SIAM J. Comput. 18, 6 (December 1989), 1245-1262. 
