@@ -13,6 +13,7 @@ An intelligent extractor library which learns the structures of the input web pa
 # Citation:
 
 If you use this work, please cite:
+https://ieeexplore.ieee.org/abstract/document/7785739 
 
 ```
 @inproceedings{gowda2016clustering,
