@@ -3,7 +3,7 @@ An intelligent extractor library which learns the structures of the input web pa
 
 ## Links 
 + [Build Instructions](https://github.com/USCDataScience/autoextractor/wiki/Build-Instructions)
-+ [Clustering Nutch output using Apache Spark](https://github.com/USCDataScience/autoextractor/wiki/Clustering-Tutorial)
++ [Clustering Web Pages using Apache Spark](https://github.com/USCDataScience/autoextractor/wiki/Clustering-Tutorial)
 
 
 # Developers: 
