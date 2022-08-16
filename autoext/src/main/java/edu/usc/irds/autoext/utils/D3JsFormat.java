@@ -81,23 +81,4 @@ public class D3JsFormat {
         return new Gson().toJson(result);
     }
 
-    /**
-     * Stores the clusters data to a json file
-     * @param file path to file
-     * @param name name for the top level cluster
-     * @param clusters cluster data
-     * @param nameMap map of index to labels
-     * @param scaleFactor factor to scale
-     * @throws IOException when an error occurs while writing to file
-     */
-    public static void storeClusters(String file, String name,
-                                     Map<Integer, List<Integer>> clusters,
-                                     final Map<Integer, String> nameMap, float scaleFactor)
-            throws IOException {
-        String result = formatClusters(name, clusters, nameMap, scaleFactor);
-        try(Writer writer = new FileWriter(file)){
-            writer.write(result);
-        }
-    }
-
 }

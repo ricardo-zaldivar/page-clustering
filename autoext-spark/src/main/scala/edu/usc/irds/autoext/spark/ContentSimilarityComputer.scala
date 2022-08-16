@@ -18,26 +18,27 @@ package edu.usc.irds.autoext.spark
 
 import java.io.ByteArrayInputStream
 import java.lang
-
 import edu.usc.irds.autoext.base.SimilarityComputer
 import edu.usc.irds.autoext.spark.ContentSimilarityComputer._
-import edu.usc.irds.autoext.spark.Utils._
 import edu.usc.irds.autoext.tree._
 import edu.usc.irds.autoext.utils.Timer
 import edu.usc.irds.lang.Function
 import org.apache.commons.io.IOUtils
+import org.apache.hadoop.fs._
 import org.apache.hadoop.io.Text
-import org.apache.nutch.protocol.Content
 import org.apache.spark.mllib.linalg.distributed.MatrixEntry
 import org.apache.spark.rdd.RDD
+import org.apache.spark.storage.StorageLevel
 import org.cyberneko.html.parsers.DOMParser
 import org.kohsuke.args4j.Option
 import org.xml.sax.InputSource
 
+import java.net.URI
+
 /**
   * This tool Computes Similarity between documents
   */
-class ContentSimilarityComputer extends IOSparkJob {
+class ContentSimilarityComputer extends SparkJob {
 
   @Option(name = "-func", required = true,
     usage = "Similarity function. Valid function names = {structure, style}")
@@ -53,11 +54,36 @@ class ContentSimilarityComputer extends IOSparkJob {
       case STYLE => new StyleSimComputer()
       case _ => throw new IllegalArgumentException(s"Similarity function $simFunc is not supported")
     }
-    val rdd = sc.union(getInputPaths().map(sc.sequenceFile(_, classOf[Text], classOf[Content])))
+
+    val fileSystem = FileSystem.get(URI.create(s3Path), sc.hadoopConfiguration)
+    val files = fileSystem.listFiles(new Path(s3Path), true)
+
+    var pages: List[(Text, Array[Byte])] = List()
+
+    while (files.hasNext) {
+      val nextFile = files.next()
+      if (nextFile.isDirectory || nextFile.getPath.getName.startsWith(".")){
+        //that's fine, skip it
+      } else if (nextFile.isFile && nextFile.getPath.getName.endsWith(".html")) {
+        val id = nextFile.getPath.toString
+        val allBytes: Array[Byte] = sc.textFile(nextFile.getPath.toString).flatMap(s => s.getBytes()).collect()
+        val ap = new Text(id)
+
+        pages = pages:+((ap, allBytes))
+        LOG.info(id)
+      } else {
+        LOG.warn(s"Skip : $nextFile" )
+      }
+    }
+
+    val rdd = sc.parallelize(pages)
+    rdd.persist(StorageLevel.MEMORY_AND_DISK)
+
     val (idRdd, entryRDD) = computeSimilarity(rdd)
 
+    val outPath = s"${s3Path}results/$simFunc"
     LOG.info(s"Storing Ids to URL map at $outPath (CSV File)")
-    idRdd.map({case(idx, url) => s"$idx,$url"}).saveAsTextFile(outPath + "-ids")
+    idRdd.map({case(idx, url) => s"$idx,$url"}).coalesce(1).saveAsTextFile(outPath + "-ids")
 
     LOG.info(s"Storing Entries at $outPath (object file)")
     entryRDD.saveAsObjectFile(outPath)
@@ -67,26 +93,26 @@ class ContentSimilarityComputer extends IOSparkJob {
     * Computes similarity of documents in given sequence file
     * @param input Content RDD
     */
-  private def  computeSimilarity(input: RDD[(Text, Content)])
+  private def  computeSimilarity(input: RDD[(Text, Array[Byte])])
   : (RDD[(Long, String)], RDD[MatrixEntry]) ={
     // local variable serialization, otherwise we need to serialize 'this' whole object
     val LOG = this.LOG
     val computer = simComputer
 
-    val rdd = input.filter(t => t._2.getContentType.contains("ml") || t._2.getContentType.contains("text"))//get only text or html
-      .map(t => (new Text(t._1), cloneContent(t._2)))
+    val rdd = input.filter(t => t._1.toString.contains("html"))//get only text or html
+      .map(t => (new Text(t._1), t._2))
 
     var treeRDD: RDD[(Text, TreeNode)] = rdd.map({case (key, content) =>
       var stream: ByteArrayInputStream = null
       var res: (Text, TreeNode) = null
       try {
-        stream = new ByteArrayInputStream(content.getContent)
+        stream = new ByteArrayInputStream(content)
         val parser = new DOMParser()
         parser.parse(new InputSource(stream))
         val doc = parser.getDocument
         val elements = doc.getElementsByTagName("HTML")
         if (elements.getLength > 0) {
-          val tree = TreeNode.create(elements.item(0), content.getUrl)
+          val tree = TreeNode.create(elements.item(0), key.toString)
           res = (key, tree)
         }
       } catch {

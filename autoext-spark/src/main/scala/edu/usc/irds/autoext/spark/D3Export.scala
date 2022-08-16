@@ -17,8 +17,8 @@
 package edu.usc.irds.autoext.spark
 
 import java.util
-
 import edu.usc.irds.autoext.utils.D3JsFormat
+import org.apache.hadoop.fs.Path
 import org.kohsuke.args4j.Option
 
 import scala.collection.JavaConverters._
@@ -26,12 +26,10 @@ import scala.collection.JavaConverters._
 /**
   * This CLI Tool exports clusters into most common format used by d3js charts.
   */
-class D3Export extends IOSparkJob {
-  @Option(name="-ids", usage = "Path to directory/file having index to id mapping. Optional.")
-  var idsFile:String = null
+class D3Export extends SparkJob {
 
   override def run(): Unit = {
-    val rdd = sc.union(getInputPaths().map(sc.textFile(_)))
+    val rdd = sc.union(Array(s"${s3Path}results/clusters").map(sc.textFile(_)))
 
     val clusters = rdd.map(line => {
       val items = line.split(",").map(_.trim.toInt)
@@ -39,15 +37,22 @@ class D3Export extends IOSparkJob {
     }).collectAsMap().asJava.asInstanceOf[util.Map[Integer, util.List[Integer]]]
 
     var idsMap: util.Map[Integer, String] = null
-    if (idsFile != null){
-      idsMap = sc.textFile(idsFile)
-        .map(line => {
-          val parts = line.split(",")
-          (parts(0).trim.toInt, parts(1).trim)})
-        .collectAsMap().asJava.asInstanceOf[util.Map[Integer, String]]
-    }
+
+    idsMap = sc.textFile(s"${s3Path}results/style-ids/part-00000")
+      .map(line => {
+        val parts = line.split(",")
+        (parts(0).trim.toInt, parts(1).trim)})
+      .collectAsMap().asJava.asInstanceOf[util.Map[Integer, String]]
+
     LOG.info("Num Clusters : {} ",  clusters.size())
-    D3JsFormat.storeClusters(outPath, "Clusters 1", clusters, idsMap, 10.0f)
+
+    val result: String = D3JsFormat.formatClusters("Clusters 1", clusters, idsMap, 10.0f)
+    val outPath: Path = new Path(s"${s3Path}results/clusters.json")
+    val fs = outPath.getFileSystem(sc.hadoopConfiguration)
+    val os = fs.create(outPath, true)
+    os.write(result.getBytes)
+    os.close()
+
     LOG.info("All done")
   }
 }

@@ -24,14 +24,9 @@ import org.kohsuke.args4j.Option
   */
 class SimilarityCombiner extends SparkJob {
 
-  @Option(name = "-in1", required = true, usage = "Path to similarity Matrix 1 (Expected : saved MatrixEntry RDD).")
-  var in1Path: String = null
-
-  @Option(name = "-in2", required = true, usage = "Path to Similarity Matrix 2 (Expected : saved MatrixEntry RDD)")
-  var in2Path: String = null
-
-  @Option(name = "-out", required = true, usage = "Path to output file/folder where the result similarity matrix shall be stored.")
-  var outPath: String = null
+  val in1Path: String = s"${s3Path}results/structure"
+  val in2Path: String = s"${s3Path}results/style"
+  val outPath: String = s"${s3Path}results/combined"
 
   @Option(name = "-weight", required = true,
     usage = "Weight/Scale for combining the similarities. The expected is [0.0, 1.0]. " +

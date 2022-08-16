@@ -32,7 +32,7 @@ import scala.collection.mutable
   *
   * @author Thamme Gowda N.
   */
-class SharedNeighborCuster extends IOSparkJob {
+class SharedNeighborCuster extends SparkJob {
 
   @Option(name = "-sim", aliases = Array("--similarityThreshold"),
     usage = "if two items have similarity above this value," +
@@ -43,10 +43,6 @@ class SharedNeighborCuster extends IOSparkJob {
     usage = "if the percent of similar neighbors in clusters exceeds this value," +
       " then those clusters will be collapsed/merged into same cluster. Range:[0.0, 1.0]")
   var sharedNeighborThreshold: Double = 0.8
-
-  @Option(name = "-d3export", usage = "Exports data to d3 JSON format")
-  var d3Export = false
-
 
   /**
     * Clusters the items based on similarity using shared near neighbors
@@ -165,7 +161,7 @@ class SharedNeighborCuster extends IOSparkJob {
 
     //STEP : Input set of similarity matrix
     val matrixEntries:RDD[MatrixEntry] = sc.union(
-      getInputPaths().map(sc.objectFile[MatrixEntry](_)))
+      Array(s"${s3Path}results/combined").map(sc.objectFile[MatrixEntry](_)))
 
     //STEP : Cluster
     val graph = cluster(matrixEntries, similarityThreshold, sharedNeighborThreshold)
@@ -177,18 +173,10 @@ class SharedNeighborCuster extends IOSparkJob {
     }).cache()
 
     //STEP save output
+    val outPath = s"${s3Path}results/clusters"
     clusters.saveAsTextFile(outPath)
     println(s"Total Clusters = ${clusters.count()}");
 
-    //Optional STEP : Export
-    if (d3Export){
-      val d3exp = new D3Export
-      d3exp.sc = sc
-      d3exp.inputPath = outPath
-      d3exp.outPath = s"$outPath.json"
-      LOG.info(s"Exporting D3 file at ${d3exp.outPath}")
-      d3exp.run()
-    }
     LOG.info("All Done")
   }
 }
