@@ -19,7 +19,6 @@ package edu.usc.irds.autoext.spark
 import java.util
 import edu.usc.irds.autoext.utils.D3JsFormat
 import org.apache.hadoop.fs.Path
-import org.kohsuke.args4j.Option
 
 import scala.collection.JavaConverters._
 
@@ -46,8 +45,8 @@ class D3Export extends SparkJob {
 
     LOG.info("Num Clusters : {} ",  clusters.size())
 
-    val result: String = D3JsFormat.formatClusters("Clusters 1", clusters, idsMap, 10.0f)
-    val outPath: Path = new Path(s"${s3Path}results/clusters.json")
+    val result: String = D3JsFormat.formatClusters("Clusters 1", clusters, idsMap, 10.0f, true)
+    val outPath: Path = new Path(s"${s3Path}results/clusters_samples.json")
     val fs = outPath.getFileSystem(sc.hadoopConfiguration)
     val os = fs.create(outPath, true)
     os.write(result.getBytes)

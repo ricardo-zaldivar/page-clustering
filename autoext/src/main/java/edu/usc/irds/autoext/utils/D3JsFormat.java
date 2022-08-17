@@ -21,10 +21,7 @@ import com.google.gson.Gson;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Utilities for transforming data to d3js format
@@ -43,11 +40,13 @@ public class D3JsFormat {
      * @param clusters cluster details
      * @param nameMap mapping indices back to labels
      * @param scaleFactor scale factor for magnifying the cluster size
+     * @param getSample true if each cluster will return just the 10% of the nodes or all nodes if 10% is less than 30 nodes
      */
     public static String formatClusters(String name,
                                         Map<Integer, List<Integer>> clusters,
                                         Map<Integer, String> nameMap,
-                                        final double scaleFactor){
+                                        final double scaleFactor,
+                                        boolean getSample){
 
         final Map<Integer, String> nameMapFinal = nameMap == null ?
                 new HashMap<Integer, String>() : nameMap;
@@ -70,7 +69,14 @@ public class D3JsFormat {
             List<Object> level2 = new ArrayList<>();
             child.put(CHILDREN_KEY, level2);
 
-            for (final Integer item: entry.getValue()){
+            List<Integer> nodes = entry.getValue();
+
+            if ((nodes.size() > 30) && getSample) {
+                long sampleSize = Math.round(nodes.size() * 0.30);
+                getSamplePerCluster(nodes, sampleSize);
+            }
+
+            for (final Integer item: nodes){
                 Map<String, Object> node = new HashMap<>();
                 node.put(INDEX_KEY, item);
                 node.put(NAME_KEY, nameMapFinal.containsKey(item)? nameMapFinal.get(item) : ""+ item);
@@ -79,6 +85,16 @@ public class D3JsFormat {
             }
         }
         return new Gson().toJson(result);
+    }
+
+    private static void getSamplePerCluster(List<Integer> list, long totalItems) {
+        Random rand = new Random();
+
+        for (int i = 0; i < totalItems; i++) {
+            int randomIndex = rand.nextInt(list.size());
+            list.remove(randomIndex);
+        }
+
     }
 
 }

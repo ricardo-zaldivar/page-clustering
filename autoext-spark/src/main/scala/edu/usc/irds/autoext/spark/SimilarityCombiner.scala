@@ -24,9 +24,9 @@ import org.kohsuke.args4j.Option
   */
 class SimilarityCombiner extends SparkJob {
 
-  val in1Path: String = s"${s3Path}results/structure"
-  val in2Path: String = s"${s3Path}results/style"
-  val outPath: String = s"${s3Path}results/combined"
+  var in1Path: String = s"${s3Path}results/structure"
+  var in2Path: String = s"${s3Path}results/style"
+  var outPath: String = s"${s3Path}results/combined"
 
   @Option(name = "-weight", required = true,
     usage = "Weight/Scale for combining the similarities. The expected is [0.0, 1.0]. " +

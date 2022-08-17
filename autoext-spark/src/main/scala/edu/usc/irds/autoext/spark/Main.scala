@@ -23,7 +23,8 @@ object Main {
     "similarity" -> (classOf[ContentSimilarityComputer], "Computes similarity between documents."),
     "sncluster" -> (classOf[SharedNeighborCuster], "Cluster using Shared near neighbor algorithm."),
     "simcombine" -> (classOf[SimilarityCombiner], "Combines two similarity measures on a linear scale."),
-    "d3export" -> (classOf[D3Export], "Exports clusters into most popular d3js format for clusters.")
+    "d3export" -> (classOf[D3Export], "Exports clusters into most popular d3js format for clusters."),
+    "comprocess" -> (classOf[CompleteProcess], "Execute the complete process, from extract similarity to build json with clusters")
   )
 
   def printAndExit(exitCode:Int = 0, msg:String = "Usage "): Unit ={
